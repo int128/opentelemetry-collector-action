@@ -77,6 +77,7 @@ const waitForReady = async (port: string): Promise<void> => {
     }
     await sleep(1000)
   }
+  throw new Error('OpenTelemetry Collector did not become ready')
 }
 
 const sleep = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
