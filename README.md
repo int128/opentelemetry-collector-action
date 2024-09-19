@@ -1,9 +1,11 @@
 # opentelemetry-collector-action [![ts](https://github.com/int128/opentelemetry-collector-action/actions/workflows/ts.yaml/badge.svg)](https://github.com/int128/opentelemetry-collector-action/actions/workflows/ts.yaml)
 
 This action starts the OpenTelemetry Collector.
-it is a wrapper of `docker run otel/opentelemetry-collector-contrib`.
+It is a wrapper of `docker run otel/opentelemetry-collector-contrib`.
 
 ## Getting Started
+
+To run the OpenTelemetry Collector,
 
 ```yaml
 jobs:
@@ -51,4 +53,6 @@ jobs:
 
 ### Outputs
 
-None.
+| Name           | Description  |
+| -------------- | ------------ |
+| `container-id` | Container ID |
