@@ -11,6 +11,7 @@ type Inputs = {
   image: string
   ports: string[]
   environments: string[]
+  readinessProbePort: string
 }
 
 type Outputs = {
@@ -46,17 +47,34 @@ export const run = async (inputs: Inputs): Promise<Outputs> => {
     },
   })
 
-  const httpClient = new HttpClient()
-  for (;;) {
-    try {
-      await httpClient.get('http://localhost:13133/')
-      break
-    } catch (e) {
-      core.info(`Waiting for OpenTelemetry Collector: ${String(e)}`)
-    }
+  if (inputs.readinessProbePort) {
+    await waitForReady(inputs.readinessProbePort)
   }
-
   const cid = (await fs.readFile(cidfile)).toString().trim()
   core.info(`OpenTelemetry Collector started in container ${cid}`)
   return { cid }
 }
+
+const waitForReady = async (port: string): Promise<void> => {
+  const httpClient = new HttpClient()
+  const httpGet = async () => {
+    try {
+      return await httpClient.get(`http://localhost:${port}`)
+    } catch (e) {
+      core.info(`Waiting for ready: ${String(e)}`)
+      return
+    }
+  }
+
+  for (let i = 0; i < 60; i++) {
+    const response = await httpGet()
+    if (response) {
+      const body = await response.readBody()
+      core.info(`OpenTelemetry Collector is ready: ${body}`)
+      return
+    }
+    await sleep(1000)
+  }
+}
+
+const sleep = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))

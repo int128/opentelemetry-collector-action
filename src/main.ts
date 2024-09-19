@@ -16,6 +16,7 @@ const main = async (): Promise<void> => {
     configPath: core.getInput('config-path'),
     environments: core.getMultilineInput('environments'),
     ports: core.getMultilineInput('ports'),
+    readinessProbePort: core.getInput('readiness-probe-port'),
   })
   core.saveState('opentelemetry-collector-cid', outputs.cid)
   core.setOutput('container-id', outputs.cid)
