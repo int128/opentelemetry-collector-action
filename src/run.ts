@@ -12,6 +12,7 @@ type Inputs = {
   ports: string[]
   environments: string[]
   readinessProbePort: string
+  dockerRunFlags: string[]
 }
 
 type Outputs = {
@@ -40,6 +41,7 @@ export const run = async (inputs: Inputs): Promise<Outputs> => {
     dockerRunArgs.push('-e', 'INLINE_OTELCOL_CONFIG')
     otelcolArgs.push('--config', 'env:INLINE_OTELCOL_CONFIG')
   }
+  dockerRunArgs.push(...inputs.dockerRunFlags)
   await exec.exec('docker', ['run', ...dockerRunArgs, inputs.image, ...otelcolArgs], {
     env: {
       ...process.env,
