@@ -7,6 +7,7 @@ const main = async (): Promise<void> => {
   if (cid) {
     return await postRun({
       cid,
+      preStopSeconds: parseInt(core.getInput('pre-stop-seconds')) || 0,
     })
   }
 
