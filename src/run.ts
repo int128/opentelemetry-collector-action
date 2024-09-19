@@ -5,7 +5,8 @@ import * as os from 'os'
 import * as path from 'path'
 
 type Inputs = {
-  configYAML: string
+  config: string
+  configPath: string
   image: string
   ports: string[]
   environments: string[]
@@ -28,15 +29,19 @@ export const run = async (inputs: Inputs): Promise<Outputs> => {
   for (const environment of inputs.environments) {
     dockerRunArgs.push('-e', environment)
   }
-  if (inputs.configYAML) {
+  if (inputs.configPath) {
+    dockerRunArgs.push('-v', `${inputs.configPath}:/config.yaml:ro`)
+    otelcolArgs.push('--config', '/config.yaml')
+  }
+  if (inputs.config) {
     // https://opentelemetry.io/docs/collector/configuration/
-    dockerRunArgs.push('-e', 'OTELCOL_CONFIG_YAML')
-    otelcolArgs.push('--config', 'env:OTELCOL_CONFIG_YAML')
+    dockerRunArgs.push('-e', 'INLINE_OTELCOL_CONFIG')
+    otelcolArgs.push('--config', 'env:INLINE_OTELCOL_CONFIG')
   }
   await exec.exec('docker', ['run', ...dockerRunArgs, inputs.image, ...otelcolArgs], {
     env: {
       ...process.env,
-      OTELCOL_CONFIG_YAML: inputs.configYAML,
+      INLINE_OTELCOL_CONFIG: inputs.config,
     },
   })
 

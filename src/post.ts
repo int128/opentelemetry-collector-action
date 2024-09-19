@@ -5,7 +5,7 @@ type Inputs = {
   cid: string
 }
 
-export const post = async (inputs: Inputs): Promise<void> => {
+export const postRun = async (inputs: Inputs): Promise<void> => {
   core.info(`Stopping OpenTelemetry Collector of container ${inputs.cid}`)
   await exec.exec('docker', ['stop', inputs.cid])
   await exec.exec('docker', ['logs', inputs.cid])

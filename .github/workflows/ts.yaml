@@ -35,7 +35,7 @@ jobs:
       - name: Run int128/opentelemetry-collector-action
         uses: ./
         with:
-          config-yaml: |
+          config: |
             receivers:
               otlp:
                 protocols:

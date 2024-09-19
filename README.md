@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: int128/opentelemetry-collector-action@v0
         with:
-          config-yaml: |
+          config: |
             receivers:
               otlp:
                 protocols:
@@ -36,7 +36,8 @@ jobs:
 | Name           | Default                    | Description                                     |
 | -------------- | -------------------------- | ----------------------------------------------- |
 | `image`        | [action.yaml](action.yaml) | Container image URI                             |
-| `config-yaml`  | -                          | Inlined configuration                           |
+| `config`       | -                          | Inline config                                   |
+| `config-path`  | -                          | Path to the configuration file                  |
 | `environments` | -                          | Environment variables provided to the container |
 | `ports`        | [action.yaml](action.yaml) | Ports to expose                                 |
 
