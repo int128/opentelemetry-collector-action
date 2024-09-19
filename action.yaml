@@ -1,11 +1,25 @@
-name: typescript-action
-description: Template of TypeScript Action
+name: opentelemetry-collector-action
+description: Action to docker run opentelemetry-collector
 
 inputs:
-  name:
-    description: example input
+  image:
+    description: Container image URI
     required: true
+    default: otel/opentelemetry-collector-contrib:0.109.0
+  config-yaml:
+    description: Inline configuration
+    required: false
+  environments:
+    description: Environment variables propataged to the container
+    required: false
+  ports:
+    description: Ports to expose
+    required: false
+    default: |
+      4317:4317
+      4318:4318
 
 runs:
   using: 'node20'
   main: 'dist/index.js'
+  post: 'dist/index.js'

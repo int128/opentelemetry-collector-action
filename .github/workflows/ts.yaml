@@ -32,10 +32,26 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
-      - name: e2e-test
+      - name: Run int128/opentelemetry-collector-action
         uses: ./
         with:
-          name: foo
+          config-yaml: |
+            receivers:
+              otlp:
+                protocols:
+                  http:
+                    endpoint: 0.0.0.0:4318
+            processors:
+              batch:
+            exporters:
+              debug:
+                verbosity: detailed
+            service:
+              pipelines:
+                traces:
+                  receivers: [otlp]
+                  processors: [batch]
+                  exporters: [debug]
 
   generate:
     runs-on: ubuntu-latest
