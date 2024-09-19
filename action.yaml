@@ -21,6 +21,10 @@ inputs:
     default: |
       4317:4317
       4318:4318
+      13133:13133
+  readiness-probe-port:
+    description: If set, waiting for the port to be ready
+    required: false
 
 outputs:
   container-id:

@@ -35,6 +35,7 @@ jobs:
       - name: Run int128/opentelemetry-collector-action
         uses: ./
         with:
+          readiness-probe-port: 13133
           config: |
             receivers:
               otlp:
@@ -46,7 +47,11 @@ jobs:
             exporters:
               debug:
                 verbosity: detailed
+            extensions:
+              health_check:
+                endpoint: 0.0.0.0:13133
             service:
+              extensions: [health_check]
               pipelines:
                 traces:
                   receivers: [otlp]

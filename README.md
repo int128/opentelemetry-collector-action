@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: int128/opentelemetry-collector-action@v0
         with:
+          readiness-probe-port: 13133
           config: |
             receivers:
               otlp:
@@ -23,7 +24,11 @@ jobs:
             exporters:
               debug:
                 verbosity: detailed
+            extensions:
+              health_check:
+                endpoint: 0.0.0.0:13133
             service:
+              extensions: [health_check]
               pipelines:
                 traces:
                   receivers: [otlp]
@@ -33,13 +38,14 @@ jobs:
 
 ### Inputs
 
-| Name           | Default                    | Description                                     |
-| -------------- | -------------------------- | ----------------------------------------------- |
-| `image`        | [action.yaml](action.yaml) | Container image URI                             |
-| `config`       | -                          | Inline config                                   |
-| `config-path`  | -                          | Path to the configuration file                  |
-| `environments` | -                          | Environment variables provided to the container |
-| `ports`        | [action.yaml](action.yaml) | Ports to expose                                 |
+| Name                   | Default                    | Description                                     |
+| ---------------------- | -------------------------- | ----------------------------------------------- |
+| `image`                | [action.yaml](action.yaml) | Container image URI                             |
+| `config`               | -                          | Inline config                                   |
+| `config-path`          | -                          | Path to the configuration file                  |
+| `environments`         | -                          | Environment variables provided to the container |
+| `ports`                | [action.yaml](action.yaml) | Ports to expose                                 |
+| `readiness-probe-port` | -                          | If set, waiting for the port to be ready        |
 
 ### Outputs
 

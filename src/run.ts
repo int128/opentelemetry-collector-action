@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as fs from 'fs/promises'
+import { HttpClient } from '@actions/http-client'
 import * as os from 'os'
 import * as path from 'path'
 
@@ -10,6 +11,7 @@ type Inputs = {
   image: string
   ports: string[]
   environments: string[]
+  readinessProbePort: string
 }
 
 type Outputs = {
@@ -44,8 +46,37 @@ export const run = async (inputs: Inputs): Promise<Outputs> => {
       INLINE_OTELCOL_CONFIG: inputs.config,
     },
   })
-
   const cid = (await fs.readFile(cidfile)).toString().trim()
+
+  if (inputs.readinessProbePort) {
+    await core.group('Waiting for ready', () => waitForReady(inputs.readinessProbePort))
+    await core.group('Startup logs', () => exec.exec('docker', ['logs', cid]))
+  }
   core.info(`OpenTelemetry Collector started in container ${cid}`)
   return { cid }
 }
+
+const waitForReady = async (port: string): Promise<void> => {
+  const httpClient = new HttpClient()
+  const httpGet = async () => {
+    const endpoint = `http://localhost:${port}`
+    try {
+      return await httpClient.get(endpoint)
+    } catch (e) {
+      core.info(`OpenTelemetry Collector is not ready: GET ${endpoint}: ${String(e)}`)
+      return
+    }
+  }
+
+  for (let i = 0; i < 60; i++) {
+    const response = await httpGet()
+    if (response) {
+      const body = await response.readBody()
+      core.info(`OpenTelemetry Collector is ready: ${body}`)
+      return
+    }
+    await sleep(1000)
+  }
+}
+
+const sleep = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
