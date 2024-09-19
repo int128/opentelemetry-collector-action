@@ -25,6 +25,9 @@ inputs:
   readiness-probe-port:
     description: If set, waiting for the port to be ready
     required: false
+  docker-run-flags:
+    description: Flags to pass to docker run
+    required: false
 
 outputs:
   container-id:
