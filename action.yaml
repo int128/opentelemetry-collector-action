@@ -6,8 +6,11 @@ inputs:
     description: Container image URI
     required: true
     default: otel/opentelemetry-collector-contrib:0.109.0
-  config-yaml:
-    description: Inline configuration
+  config:
+    description: Inline config
+    required: false
+  config-path:
+    description: Path to the configuration file
     required: false
   environments:
     description: Environment variables propataged to the container
@@ -18,6 +21,10 @@ inputs:
     default: |
       4317:4317
       4318:4318
+
+outputs:
+  container-id:
+    description: Container ID
 
 runs:
   using: 'node20'

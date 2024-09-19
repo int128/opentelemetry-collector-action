@@ -1,20 +1,24 @@
 import * as core from '@actions/core'
 import { run } from './run.js'
-import { post } from './post.js'
+import { postRun } from './post.js'
 
 const main = async (): Promise<void> => {
-  const started = core.getState('opentelemetry-collector-started')
-  if (started) {
-    return await post()
+  const cid = core.getState('opentelemetry-collector-cid')
+  if (cid) {
+    return await postRun({
+      cid,
+    })
   }
 
-  await run({
+  const outputs = await run({
     image: core.getInput('image', { required: true }),
-    configYAML: core.getInput('config-yaml'),
+    config: core.getInput('config'),
+    configPath: core.getInput('config-path'),
     environments: core.getMultilineInput('environments'),
     ports: core.getMultilineInput('ports'),
   })
-  core.saveState('opentelemetry-collector-started', 'true')
+  core.saveState('opentelemetry-collector-cid', outputs.cid)
+  core.setOutput('container-id', outputs.cid)
 }
 
 main().catch((e: Error) => {
