@@ -1,11 +1,14 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 
-export const post = async (): Promise<void> => {
-  core.info('Stopping OpenTelemetry Collector')
-  const containerName = 'opentelemetry-collector'
-  await exec.exec('docker', ['stop', containerName])
-  await exec.exec('docker', ['logs', containerName])
-  await exec.exec('docker', ['rm', containerName])
+type Inputs = {
+  cid: string
+}
+
+export const post = async (inputs: Inputs): Promise<void> => {
+  core.info(`Stopping OpenTelemetry Collector of container ${inputs.cid}`)
+  await exec.exec('docker', ['stop', inputs.cid])
+  await exec.exec('docker', ['logs', inputs.cid])
+  await exec.exec('docker', ['rm', inputs.cid])
   core.info('Stopped OpenTelemetry Collector')
 }

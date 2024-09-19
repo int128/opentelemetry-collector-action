@@ -1,5 +1,8 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
+import * as fs from 'fs/promises'
+import * as os from 'os'
+import * as path from 'path'
 
 type Inputs = {
   configYAML: string
@@ -8,10 +11,17 @@ type Inputs = {
   environments: string[]
 }
 
-export const run = async (inputs: Inputs): Promise<void> => {
+type Outputs = {
+  cid: string
+}
+
+export const run = async (inputs: Inputs): Promise<Outputs> => {
+  const tempDir = await fs.mkdtemp(process.env.RUNNER_TEMP || os.tmpdir())
+  const cidfile = path.join(tempDir, 'cidfile')
+
   core.info('Starting OpenTelemetry Collector')
   const otelcolArgs = []
-  const dockerRunArgs = ['-q', '-d', '--name', 'opentelemetry-collector']
+  const dockerRunArgs = ['-q', '-d', '--cidfile', cidfile]
   for (const port of inputs.ports) {
     dockerRunArgs.push('-p', port)
   }
@@ -20,8 +30,17 @@ export const run = async (inputs: Inputs): Promise<void> => {
   }
   if (inputs.configYAML) {
     // https://opentelemetry.io/docs/collector/configuration/
-    dockerRunArgs.push('-e', `INLINE_OTELCOL_CONFIG=${inputs.configYAML}`)
-    otelcolArgs.push('--config', 'env:INLINE_OTELCOL_CONFIG')
+    dockerRunArgs.push('-e', 'OTELCOL_CONFIG_YAML')
+    otelcolArgs.push('--config', 'env:OTELCOL_CONFIG_YAML')
   }
-  await exec.exec('docker', ['run', ...dockerRunArgs, inputs.image, ...otelcolArgs])
+  await exec.exec('docker', ['run', ...dockerRunArgs, inputs.image, ...otelcolArgs], {
+    env: {
+      ...process.env,
+      OTELCOL_CONFIG_YAML: inputs.configYAML,
+    },
+  })
+
+  const cid = (await fs.readFile(cidfile)).toString().trim()
+  core.info(`OpenTelemetry Collector started in container ${cid}`)
+  return { cid }
 }
