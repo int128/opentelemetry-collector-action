@@ -46,11 +46,12 @@ export const run = async (inputs: Inputs): Promise<Outputs> => {
       INLINE_OTELCOL_CONFIG: inputs.config,
     },
   })
+  const cid = (await fs.readFile(cidfile)).toString().trim()
 
   if (inputs.readinessProbePort) {
     await waitForReady(inputs.readinessProbePort)
+    await exec.exec('docker', ['logs', cid])
   }
-  const cid = (await fs.readFile(cidfile)).toString().trim()
   core.info(`OpenTelemetry Collector started in container ${cid}`)
   return { cid }
 }
@@ -58,10 +59,11 @@ export const run = async (inputs: Inputs): Promise<Outputs> => {
 const waitForReady = async (port: string): Promise<void> => {
   const httpClient = new HttpClient()
   const httpGet = async () => {
+    const endpoint = `http://localhost:${port}`
     try {
-      return await httpClient.get(`http://localhost:${port}`)
+      return await httpClient.get(endpoint)
     } catch (e) {
-      core.info(`Waiting for ready: ${String(e)}`)
+      core.info(`Waiting for ready: ${endpoint}: ${String(e)}`)
       return
     }
   }
