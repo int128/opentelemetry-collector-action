@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as fs from 'fs/promises'
+import { HttpClient } from '@actions/http-client'
 import * as os from 'os'
 import * as path from 'path'
 
@@ -44,6 +45,16 @@ export const run = async (inputs: Inputs): Promise<Outputs> => {
       INLINE_OTELCOL_CONFIG: inputs.config,
     },
   })
+
+  const httpClient = new HttpClient()
+  for (;;) {
+    try {
+      await httpClient.get('http://localhost:13133/')
+      break
+    } catch (e) {
+      core.info(`Waiting for OpenTelemetry Collector: ${String(e)}`)
+    }
+  }
 
   const cid = (await fs.readFile(cidfile)).toString().trim()
   core.info(`OpenTelemetry Collector started in container ${cid}`)
