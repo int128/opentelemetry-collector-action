@@ -46,6 +46,8 @@ jobs:
 | `environments`         | -                          | Environment variables provided to the container |
 | `ports`                | [action.yaml](action.yaml) | Ports to expose                                 |
 | `readiness-probe-port` | -                          | If set, waiting for the port to be ready        |
+| `prestop-seconds`      | 5                          | Seconds to wait before stopping the container   |
+| `docker-run-flags`     | -                          | Additional flags for `docker run` command       |
 
 ### Outputs
 
