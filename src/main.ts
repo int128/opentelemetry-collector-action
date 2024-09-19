@@ -3,10 +3,11 @@ import { run } from './run.js'
 import { postRun } from './post.js'
 
 const main = async (): Promise<void> => {
-  const cid = core.getState('opentelemetry-collector-cid')
-  if (cid) {
+  const containerId = core.getState('container-id')
+  if (containerId) {
     return await postRun({
-      cid,
+      containerId,
+      preStopSeconds: parseInt(core.getInput('prestop-seconds')) || 0,
     })
   }
 
@@ -19,8 +20,8 @@ const main = async (): Promise<void> => {
     readinessProbePort: core.getInput('readiness-probe-port'),
     dockerRunFlags: core.getMultilineInput('docker-run-flags'),
   })
-  core.saveState('opentelemetry-collector-cid', outputs.cid)
-  core.setOutput('container-id', outputs.cid)
+  core.saveState('container-id', outputs.containerId)
+  core.setOutput('container-id', outputs.containerId)
 }
 
 main().catch((e: Error) => {

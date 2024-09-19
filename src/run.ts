@@ -16,7 +16,7 @@ type Inputs = {
 }
 
 type Outputs = {
-  cid: string
+  containerId: string
 }
 
 export const run = async (inputs: Inputs): Promise<Outputs> => {
@@ -48,14 +48,14 @@ export const run = async (inputs: Inputs): Promise<Outputs> => {
       INLINE_OTELCOL_CONFIG: inputs.config,
     },
   })
-  const cid = (await fs.readFile(cidfile)).toString().trim()
+  const containerId = (await fs.readFile(cidfile)).toString().trim()
 
   if (inputs.readinessProbePort) {
     await core.group('Waiting for ready', () => waitForReady(inputs.readinessProbePort))
-    await core.group('Startup logs', () => exec.exec('docker', ['logs', cid]))
+    await core.group('Startup logs', () => exec.exec('docker', ['logs', containerId]))
   }
-  core.info(`OpenTelemetry Collector started in container ${cid}`)
-  return { cid }
+  core.info(`OpenTelemetry Collector started in container ${containerId}`)
+  return { containerId }
 }
 
 const waitForReady = async (port: string): Promise<void> => {

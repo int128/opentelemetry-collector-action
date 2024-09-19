@@ -25,8 +25,12 @@ inputs:
   readiness-probe-port:
     description: If set, waiting for the port to be ready
     required: false
+  prestop-seconds:
+    description: Seconds to wait before stopping the container
+    required: false
+    default: '5'
   docker-run-flags:
-    description: Flags to pass to docker run
+    description: Additional flags for `docker run` command
     required: false
 
 outputs:
