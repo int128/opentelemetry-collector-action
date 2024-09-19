@@ -49,8 +49,8 @@ export const run = async (inputs: Inputs): Promise<Outputs> => {
   const cid = (await fs.readFile(cidfile)).toString().trim()
 
   if (inputs.readinessProbePort) {
-    await waitForReady(inputs.readinessProbePort)
-    await exec.exec('docker', ['logs', cid])
+    await core.group('Waiting for ready', () => waitForReady(inputs.readinessProbePort))
+    await core.group('Startup logs', () => exec.exec('docker', ['logs', cid]))
   }
   core.info(`OpenTelemetry Collector started in container ${cid}`)
   return { cid }
@@ -63,7 +63,7 @@ const waitForReady = async (port: string): Promise<void> => {
     try {
       return await httpClient.get(endpoint)
     } catch (e) {
-      core.info(`Waiting for ready: ${endpoint}: ${String(e)}`)
+      core.info(`OpenTelemetry Collector is not ready: GET ${endpoint}: ${String(e)}`)
       return
     }
   }
