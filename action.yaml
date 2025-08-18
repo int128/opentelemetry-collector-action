@@ -5,7 +5,7 @@ inputs:
   image:
     description: Container image URI
     required: true
-    default: otel/opentelemetry-collector-contrib:0.132.2
+    default: otel/opentelemetry-collector-contrib:0.132.4
   config:
     description: Inline config
     required: false
