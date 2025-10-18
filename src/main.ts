@@ -1,13 +1,13 @@
 import * as core from '@actions/core'
-import { run } from './run.js'
 import { postRun } from './post.js'
+import { run } from './run.js'
 
 const main = async (): Promise<void> => {
   const containerId = core.getState('container-id')
   if (containerId) {
     return await postRun({
       containerId,
-      preStopSeconds: parseInt(core.getInput('prestop-seconds')) || 0,
+      preStopSeconds: parseInt(core.getInput('prestop-seconds'), 10) || 0,
     })
   }
 
