@@ -1,18 +1,19 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>int128/renovate-base",
     "github>int128/typescript-action-renovate-config#v1.7.0",
-    "helpers:pinGitHubActionDigests",
+    "helpers:pinGitHubActionDigests"
   ],
   "customManagers": [
     {
       "customType": "regex",
       "fileMatch": ["^action.yaml$"],
       "matchStrings": [
-        "otel/opentelemetry-collector-contrib:(?<currentValue>[a-z0-9\.]+)",
+        "otel/opentelemetry-collector-contrib:(?<currentValue>[a-z0-9\\.]+)"
       ],
       "depNameTemplate": "otel/opentelemetry-collector-contrib",
-      "datasourceTemplate": "docker",
-    },
-  ],
+      "datasourceTemplate": "docker"
+    }
+  ]
 }
