@@ -9,9 +9,7 @@
     {
       "customType": "regex",
       "fileMatch": ["^action.yaml$"],
-      "matchStrings": [
-        "otel/opentelemetry-collector-contrib:(?<currentValue>[a-z0-9\\.]+)"
-      ],
+      "matchStrings": ["otel/opentelemetry-collector-contrib:(?<currentValue>[a-z0-9\\.]+)"],
       "depNameTemplate": "otel/opentelemetry-collector-contrib",
       "datasourceTemplate": "docker"
     }
