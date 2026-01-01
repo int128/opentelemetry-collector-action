@@ -8,12 +8,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "action.yaml"
-      ],
-      "matchStrings": [
-        "otel/opentelemetry-collector-contrib:(?<currentValue>[a-z0-9\\.]+)"
-      ],
+      "managerFilePatterns": ["action.yaml"],
+      "matchStrings": ["otel/opentelemetry-collector-contrib:(?<currentValue>[a-z0-9\\.]+)"],
       "depNameTemplate": "otel/opentelemetry-collector-contrib",
       "datasourceTemplate": "docker"
     }
