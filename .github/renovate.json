@@ -9,7 +9,7 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/^action.yaml$/"
+        "action.yaml"
       ],
       "matchStrings": [
         "otel/opentelemetry-collector-contrib:(?<currentValue>[a-z0-9\\.]+)"
