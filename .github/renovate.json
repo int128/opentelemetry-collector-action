@@ -8,8 +8,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "^action.yaml$"
+      "managerFilePatterns": [
+        "action.yaml"
       ],
       "matchStrings": [
         "otel/opentelemetry-collector-contrib:(?<currentValue>[a-z0-9\\.]+)"
