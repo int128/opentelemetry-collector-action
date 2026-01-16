@@ -9,7 +9,7 @@
   "dependencies": {
     "@actions/core": "2.0.1",
     "@actions/exec": "2.0.0",
-    "@actions/http-client": "3.0.0"
+    "@actions/http-client": "3.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
